@@ -1,0 +1,4 @@
+﻿  service(lab9).cpp
+c:\users\sergey\documents\visual studio 2015\projects\service(lab9)\service(lab9)\service(lab9).cpp(29): warning C4018: <: несоответствие типов со знаком и без знака
+  service(lab9).vcxproj -> c:\users\sergey\documents\visual studio 2015\Projects\service(lab9)\Debug\service(lab9).exe
+  service(lab9).vcxproj -> c:\users\sergey\documents\visual studio 2015\Projects\service(lab9)\Debug\service(lab9).pdb (Full PDB)
