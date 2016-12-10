@@ -7,10 +7,10 @@ WelcomeWindow::WelcomeWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
-	mPWindow = new PainterWindow;
+	mPWindow = new PainterWindow; // why not in member initializer?
 	connect(this, SIGNAL(formula(QString)), mPWindow, SLOT(drawTree(QString)));
 	connect(ui.lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(enableButton(const QString &)));
-	emit ui.lineEdit->textChanged("");
+	emit ui.lineEdit->textChanged(""); // setText() ?
 }
 WelcomeWindow::~WelcomeWindow()
 {
@@ -44,6 +44,7 @@ bool WelcomeWindow::checkLine(string& str) {
 		if (i == ')')
 			countClose++;
 	}
+	//begin repeated code
 	if (countOpen != countClose) {
 		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "Brackets miss count");
 		pmb->exec();
@@ -80,6 +81,7 @@ bool WelcomeWindow::checkLine(string& str) {
 			return false;
 		}
 	}
+
 	if (str.size() < 3)
 	{
 		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "Too short function");
@@ -106,6 +108,7 @@ bool WelcomeWindow::checkLine(string& str) {
 		delete pmb;
 		return false;
 	}
+	//end repeated code
 	return true;
 }
 void WelcomeWindow::enableButton(const QString &text)
@@ -115,7 +118,7 @@ void WelcomeWindow::enableButton(const QString &text)
 void WelcomeWindow::tableTrue(const QString& text) {
 	string str=text.toStdString();
 	vector<char> Variables = searchVariables(str);
-	vector<vector<char>> values;
+	vector<vector<char>> values; //
 	ui.listWidget->clear();
 	for (int i = 0;i < Variables.size();i++) {
 		int count = 0;
