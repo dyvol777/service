@@ -20,6 +20,7 @@ bool PainterWindow::checkLine(QString& Qstr) {
 	for (auto i : str)
 		if (helper.isVariable(i))
 			countVariable++;
+	//begin repeated code
 	if(countVariable!=numberVariables(inputFormula))
 	{
 		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering checking of variables", "Wrong number of variables");
@@ -73,6 +74,7 @@ bool PainterWindow::checkLine(QString& Qstr) {
 		delete pmb;
 		return false;
 	}
+	//end repeated code
 	return true;
 }
 int PainterWindow::numberVariables(string& str) {
@@ -120,7 +122,7 @@ void PainterWindow::drawTree(const QString& input)
 	headTree->setCoord(headTree);//headTree.setCoord(headTree.current);
 	QRectF blok(headTree->coord.first, headTree->coord.second, 40, 40);//
 	mScene->addRect(blok);
-	auto mText = new QGraphicsSimpleTextItem();
+	auto mText = new QGraphicsSimpleTextItem(); // memory leak 
 
 	mText->setPos(blok.center());
 	QString str;
@@ -132,7 +134,7 @@ void PainterWindow::drawTree(const QString& input)
 }
 void PainterWindow::drawTreeValues(shared_ptr<tree> current)//void PainterWindow::drawTreeValues(tree* current)
 {
-	auto mValue = new QGraphicsSimpleTextItem();
+	auto mValue = new QGraphicsSimpleTextItem(); // memory leak
 	mValue->setPos(current->right->coord.first - 10, current->right->coord.second + 5);
 	QString str;
 	str += current->right->currentValue;
@@ -140,8 +142,9 @@ void PainterWindow::drawTreeValues(shared_ptr<tree> current)//void PainterWindow
 	mScene->addItem(mValue);
 	if (current->isOperator(current->right->data))
 	{
+		// begin repeated code
 		drawTreeValues(current->right);
-		auto mValue1 = new QGraphicsSimpleTextItem();
+		auto mValue1 = new QGraphicsSimpleTextItem(); // memory leak
 		mValue1->setPos(current->left->coord.first - 10, current->left->coord.second + 5);
 		QString str1;
 		str1 += current->left->currentValue;
@@ -167,6 +170,7 @@ void PainterWindow::drawTreeValues(shared_ptr<tree> current)//void PainterWindow
 		if (!current->isOperator(current->left->data))
 			return;
 		drawTreeValues(current->left);
+		// end repeated code
 	}
 	
 	
@@ -175,7 +179,7 @@ void PainterWindow::drawTree1(shared_ptr<tree> current)//void PainterWindow::dra
 {
 	QRectF blok(current->right->coord.first, current->right->coord.second, 40, 40);
 	mScene->addRect(blok);
-	auto mText = new QGraphicsSimpleTextItem();
+	auto mText = new QGraphicsSimpleTextItem(); // memory leak
 	mText->setPos(blok.center());
 	QString str;
 	str += current->right->data;
@@ -185,10 +189,11 @@ void PainterWindow::drawTree1(shared_ptr<tree> current)//void PainterWindow::dra
 	mScene->addLine(line);
 	if (current->isOperator(current->right->data))
 	{
+		// begin repeated code
 		drawTree1(current->right);
 		QRectF blok1(current->left->coord.first, current->left->coord.second, 40, 40);
 		mScene->addRect(blok1);
-		auto mText1 = new QGraphicsSimpleTextItem();
+		auto mText1 = new QGraphicsSimpleTextItem(); // memory leak
 		mText1->setPos(blok1.center());
 		QString str1;
 		str1 += current->left->data;
@@ -210,7 +215,7 @@ void PainterWindow::drawTree1(shared_ptr<tree> current)//void PainterWindow::dra
 	else {
 		QRectF blok1(current->left->coord.first, current->left->coord.second, 40, 40);
 		mScene->addRect(blok1);
-		auto mText1 = new QGraphicsSimpleTextItem();
+		auto mText1 = new QGraphicsSimpleTextItem(); // memory leak
 		mText1->setPos(blok1.center());
 		QString str1;
 		str1 += current->left->data;
@@ -222,6 +227,7 @@ void PainterWindow::drawTree1(shared_ptr<tree> current)//void PainterWindow::dra
 		if (!current->isOperator(current->left->data))
 			return;
 		drawTree1(current->left);
+		// end repeated code
 	}
 
 }
@@ -237,7 +243,7 @@ void PainterWindow::on_pushButton_clicked(){
 		mScene->clear();
 		QRectF blok(headTree->coord.first, headTree->coord.second, 40, 40);//
 		mScene->addRect(blok);
-		auto mText = new QGraphicsSimpleTextItem();
+		auto mText = new QGraphicsSimpleTextItem(); // memory leak
 
 		mText->setPos(blok.center());
 		QString str;
@@ -249,7 +255,7 @@ void PainterWindow::on_pushButton_clicked(){
 		for (int i = 0;i < tree::biggestLevel;i++)
 			headTree->countValues(headTree, i);//headTree.countValues(headTree.current, i);
 		headTree->currentValue = headTree->rezultValue(headTree->data, headTree->left->currentValue, headTree->right->currentValue);//
-		auto mValue = new QGraphicsSimpleTextItem();
+		auto mValue = new QGraphicsSimpleTextItem(); // memory leak
 		mValue->setPos(headTree->coord.first - 10, headTree->coord.second + 5);//
 		str = "";
 		str += headTree->currentValue;//

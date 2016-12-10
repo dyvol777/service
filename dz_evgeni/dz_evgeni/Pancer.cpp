@@ -16,7 +16,7 @@ Parcer::Parcer(string data)
 	precedence['+'] = 2;
 	precedence['-'] = 2;//equal
 }
-bool Parcer::isOperator(char c)
+bool Parcer::isOperator(char c) // std::string::find ???
 {
 	for (auto v : operators)
 	{
@@ -25,7 +25,7 @@ bool Parcer::isOperator(char c)
 	}
 	return false;
 }
-bool Parcer::isVariable(char c)
+bool Parcer::isVariable(char c) // std::string::find ???
 {
 	for (auto v : variables)
 	{
