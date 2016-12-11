@@ -89,7 +89,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PainterWindow.cpp" />
     <ClCompile Include="Pancer.cpp" />
-    <ClCompile Include="Scheme.cpp" />
     <ClCompile Include="WelcomeWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -120,20 +119,6 @@
     <ClInclude Include="GeneratedFiles\ui_PainterWindow.h" />
     <ClInclude Include="GeneratedFiles\ui_WelcomeWindow.h" />
     <ClInclude Include="Pancer.h" />
-    <CustomBuild Include="Scheme.h">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Command>
-    </CustomBuild>
     <CustomBuild Include="PainterWindow.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing PainterWindow.h...</Message>

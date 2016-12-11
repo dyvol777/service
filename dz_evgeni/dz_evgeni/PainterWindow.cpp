@@ -2,78 +2,90 @@
 #include <QGraphicsItem>
 #include "WelcomeWindow.h"
 #include <qlineedit.h>
-
+#include <qfiledialog.h>
 class QLineEdit;
 PainterWindow::PainterWindow(QWidget *parent)
-	: QWidget(parent)
+	:QMainWindow(parent)
+	//QWidget(parent)
 {
 	ui.setupUi(this);
 	setupScene();
+	connect(ui.lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(enableButton(const QString &)));
 }
 PainterWindow::~PainterWindow()
 {
+
+}
+void PainterWindow::checkNumVariables(string& tocheck,Parcer& helper)
+{
+	int countVariable = 0;
+	for (auto i : tocheck)
+		if (helper.isVariable(i))
+			countVariable++;
+	if (countVariable != numberVariables(inputFormula))
+	{
+		
+		throw runtime_error("Wrong number of variables");
+	}
+}
+void PainterWindow::checkSimbols(string& tocheck, Parcer& helper)
+{
+	for (auto i : tocheck)
+		if ((!helper.isVariable(i)) && (i != '=') && (i != ' ') && (i != '0') && (i != '1'))
+		{
+			throw runtime_error("Wrong simbols detected");
+		}
+}
+void PainterWindow::checkPositionsSymbols(string& tocheck, Parcer& helper)
+{
+	for (int i = 0;i<tocheck.size() - 1;i++)
+		if ((helper.isVariable(tocheck[i])) && (tocheck[i + 1] != '='))
+		{
+			throw runtime_error("After variable is not =");
+			
+		}
+
+	for (int i = 0;i<tocheck.size() - 1;i++)
+		if ((tocheck[i] == '=') && ((tocheck[i + 1] != '0') && (tocheck[i + 1] != '1')))
+		{
+			throw runtime_error("After = is not value");
+		}
+
+	for (int i = 0;i<tocheck.size() - 1;i++)
+		if (((tocheck[i] == '0') || (tocheck[i] == '1')) && (tocheck[i + 1] != ' '))
+		{
+			throw runtime_error("After value is not space");
+		}
+
+	if ((tocheck[tocheck.size() - 1] != '0') && (tocheck[tocheck.size() - 1] != '1'))
+	{
+		throw runtime_error("Ends is not value");
+	}
+
+	if (!helper.isVariable(tocheck[0]))
+	{
+		throw runtime_error("Begins is not variable");
+	}
 }
 bool PainterWindow::checkLine(QString& Qstr) {
 	Parcer helper;
 	string str = Qstr.toStdString();
-	int countVariable = 0;
-	for (auto i : str)
-		if (helper.isVariable(i))
-			countVariable++;
-	if(countVariable!=numberVariables(inputFormula))
+	bool ret = true;
+	
+	try 
 	{
-		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering checking of variables", "Wrong number of variables");
+		checkNumVariables(str, helper);
+		checkSimbols(str, helper);
+		checkPositionsSymbols(str, helper);
+	}
+	catch (runtime_error& ec)
+	{
+		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering checking of variables", ec.what());
 		pmb->exec();
 		delete pmb;
-		return false;
+		ret = false;
 	}
-	for (auto i : str)
-		if ((!helper.isVariable(i))&&(i!='=') && (i != ' ') && (i != '0') && (i != '1'))
-		{
-			QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering checking of variables", "Wrong simbols detected");
-			pmb->exec();
-			delete pmb;
-			return false;
-		}
-	for (int i=0;i<str.size()-1;i++)
-		if((helper.isVariable(str[i]))&&(str[i+1]!='='))
-		{
-			QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering checking of variables", "After variable is not =");
-			pmb->exec();
-			delete pmb;
-			return false;
-		}
-	for (int i = 0;i<str.size()-1;i++)
-		if ((str[i] == '=') && ((str[i + 1] != '0')&&(str[i+1]!='1')))
-		{
-			QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering checking of variables", "After = is not value");
-			pmb->exec();
-			delete pmb;
-			return false;
-		}
-	for (int i = 0;i<str.size()-1;i++)
-		if (((str[i] == '0') || (str[i] == '1')) && (str[i+1]!=' '))
-		{
-			QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering checking of variables", "After value is not space");
-			pmb->exec();
-			delete pmb;
-			return false;
-		}
-	if((str[str.size()-1]!='0')&& (str[str.size() - 1] != '1'))
-	{
-		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering checking of variables", "Ends is not value");
-		pmb->exec();
-		delete pmb;
-		return false;
-	}
-	if (!helper.isVariable(str[0]))
-	{
-		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering checking of variables", "Begins is not variable");
-		pmb->exec();
-		delete pmb;
-		return false;
-	}
-	return true;
+	return ret;
 }
 int PainterWindow::numberVariables(string& str) {
 	Parcer toCheck;
@@ -95,92 +107,90 @@ int PainterWindow::numberVariables(string& str) {
 	}
 	return quantity;
 }
-void PainterWindow::drawTree(const QString& input)
+int PainterWindow::getLeftBot(shared_ptr<tree> current)
 {
+	if (current->left != nullptr)
+		getLeftBot(current->left);
+	if (current->left == nullptr)
+		return current->coord.first;
+}
+int PainterWindow::getRightBot(shared_ptr<tree> current)
+{
+	if (current->right != nullptr)
+		getLeftBot(current->left);
+	if (current->right == nullptr)
+		return current->coord.first;
+}
+void PainterWindow::drawTree(const QString& input)//здесь нагажено
+{
+	
+	delete mScene;
+	delete mView;
+	mScene = new QGraphicsScene(this);
 	Parcer data(input.toStdString());
 	inputFormula = input.toStdString();
 	data.goPolish();
 	data.logPolish();
 	mScene->clear();
 	tree* myTree = new tree;
-	headTree.reset(myTree);
-	headTree->set(data);//
-	headTree->data = headTree->tempOutput.back();//
-	headTree->tempOutput.pop_back();//
-	tree::biggestLevel = 0;
-	headTree->buildTree(headTree);//headTree.buildTree(headTree.current);
-	if(headTree->biggestLevel>5)//
 	{
-		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "You need full version");
-		pmb->exec();
-		delete pmb;
+		headTree.reset(myTree);
+		headTree->set(data);
+		headTree->data = headTree->tempOutput.back();
+		headTree->tempOutput.pop_back();
+		tree::biggestLevel = 0;
+		headTree->buildTree(headTree);
+		headTree->coord.first = 1500;
+		headTree->coord.second = 500;
+		headTree->setCoord(headTree);
 	}
-	headTree->coord.first = 1500;//
-	headTree->coord.second = 500;//
-	headTree->setCoord(headTree);//headTree.setCoord(headTree.current);
+	int top=headTree->coord.second;
+	int leftBot = getLeftBot(headTree);
+	int rightBot = getRightBot(headTree);
+	int bot = top + headTree->biggestLevel * 80;
+	QSize minSize(1500, 700);
+	mView = new QGraphicsView(this);
+	mView->setMinimumSize(minSize);
+	mView->setScene(mScene);
 	QRectF blok(headTree->coord.first, headTree->coord.second, 40, 40);//
 	mScene->addRect(blok);
-	auto mText = new QGraphicsSimpleTextItem();
-
-	mText->setPos(blok.center());
 	QString str;
-	str+=headTree->data;//
-	mText->setText(str);
-	mScene->addItem(mText);
-	drawTree1(headTree);//drawTree1(headTree.current);
-
+	str+=headTree->data;
+	mScene->addSimpleText(str)->setPos(blok.center());
+	drawTree1(headTree);
 }
-void PainterWindow::drawTreeValues(shared_ptr<tree> current)//void PainterWindow::drawTreeValues(tree* current)
+void PainterWindow::drawTreeValues(shared_ptr<tree> current)
 {
-	auto mValue = new QGraphicsSimpleTextItem();
-	mValue->setPos(current->right->coord.first - 10, current->right->coord.second + 5);
 	QString str;
 	str += current->right->currentValue;
-	mValue->setText(str);
-	mScene->addItem(mValue);
+	mScene->addSimpleText(str)->setPos(current->right->coord.first - 10, current->right->coord.second + 5);
 	if (current->isOperator(current->right->data))
 	{
 		drawTreeValues(current->right);
-		auto mValue1 = new QGraphicsSimpleTextItem();
-		mValue1->setPos(current->left->coord.first - 10, current->left->coord.second + 5);
 		QString str1;
 		str1 += current->left->currentValue;
-		mValue1->setText(str1);
-		mScene->addItem(mValue1);
-		
+		mScene->addSimpleText(str1)->setPos(current->left->coord.first - 10, current->left->coord.second + 5);
 		if (current->isOperator(current->left->data))
-		
 			drawTreeValues(current->left);
-		
 		else
-		
 			return;
-		
 	}
 	else {
-		auto mValue1 = new QGraphicsSimpleTextItem();
-		mValue1->setPos(current->left->coord.first - 10, current->left->coord.second + 5);
 		QString str1;
 		str1 += current->left->currentValue;
-		mValue1->setText(str1);
-		mScene->addItem(mValue1);
+		mScene->addSimpleText(str1)->setPos(current->left->coord.first - 10, current->left->coord.second + 5);
 		if (!current->isOperator(current->left->data))
 			return;
 		drawTreeValues(current->left);
 	}
-	
-	
 }
-void PainterWindow::drawTree1(shared_ptr<tree> current)//void PainterWindow::drawTree1(tree* current)
+void PainterWindow::drawTree1(shared_ptr<tree> current)
 {
 	QRectF blok(current->right->coord.first, current->right->coord.second, 40, 40);
 	mScene->addRect(blok);
-	auto mText = new QGraphicsSimpleTextItem();
-	mText->setPos(blok.center());
 	QString str;
 	str += current->right->data;
-	mText->setText(str);
-	mScene->addItem(mText);
+	mScene->addSimpleText(str)->setPos(blok.center());
 	QLineF line(current->coord.first + 20, current->coord.second + 40, current->right->coord.first + 20, current->right->coord.second);
 	mScene->addLine(line);
 	if (current->isOperator(current->right->data))
@@ -188,48 +198,35 @@ void PainterWindow::drawTree1(shared_ptr<tree> current)//void PainterWindow::dra
 		drawTree1(current->right);
 		QRectF blok1(current->left->coord.first, current->left->coord.second, 40, 40);
 		mScene->addRect(blok1);
-		auto mText1 = new QGraphicsSimpleTextItem();
-		mText1->setPos(blok1.center());
 		QString str1;
 		str1 += current->left->data;
-		mText1->setText(str1);
-		mScene->addItem(mText1);
+		mScene->addSimpleText(str1)->setPos(blok1.center());
 		QLineF line1(current->coord.first + 20, current->coord.second + 40, current->left->coord.first + 20, current->left->coord.second);
 		mScene->addLine(line1);
-		
 		if (current->isOperator(current->left->data))
-		
 			drawTree1(current->left);
-		
 		else
-		
 			return;
-		
-		
 	}
 	else {
 		QRectF blok1(current->left->coord.first, current->left->coord.second, 40, 40);
 		mScene->addRect(blok1);
-		auto mText1 = new QGraphicsSimpleTextItem();
-		mText1->setPos(blok1.center());
 		QString str1;
 		str1 += current->left->data;
-		mText1->setText(str1);
-		mScene->addItem(mText1);
+		mScene->addSimpleText(str1)->setPos(blok1.center());
 		QLineF line1(current->coord.first + 20, current->coord.second + 40, current->left->coord.first + 20, current->left->coord.second);
 		mScene->addLine(line1);
-	
 		if (!current->isOperator(current->left->data))
 			return;
 		drawTree1(current->left);
 	}
-
 }
-void PainterWindow::setupScene() {
+void PainterWindow::setupScene() //здесь нагажено тоже
+{
 	mScene = new QGraphicsScene(this);
-	mScene->setSceneRect(0, 0, 3000, 1000);
+	//mScene->setSceneRect(0, 0, 3000, 1000);
 	mView = new QGraphicsView(this);
-	mView->setScene(mScene);
+	//mView->setScene(mScene);
 }
 void PainterWindow::on_pushButton_clicked(){
 	QString text = ui.lineEdit->text();
@@ -257,4 +254,18 @@ void PainterWindow::on_pushButton_clicked(){
 		mScene->addItem(mValue);
 		drawTreeValues(headTree);//drawTreeValues(headTree.current);
 	}
+}
+void PainterWindow::on_pushButton_2_clicked() 
+{
+	mView->scale(1.25, 1.25);
+}
+void PainterWindow::on_pushButton_3_clicked()
+{
+	mView->scale(0.8, 0.8);
+}
+void PainterWindow::on_pushButton_4_clicked()
+{
+	QString fileName = QFileDialog::getSaveFileName(this, "Save image", QCoreApplication::applicationDirPath(), "BMP Files (*.bmp);;JPEG (*.JPEG);;PNG (*.png)");
+	QPixmap pixMap = QPixmap::grabWidget(mView);
+	pixMap.save(fileName);
 }

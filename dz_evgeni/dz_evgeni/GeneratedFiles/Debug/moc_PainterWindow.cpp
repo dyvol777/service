@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_PainterWindow_t {
-    QByteArrayData data[4];
-    char stringdata0[46];
+    QByteArrayData data[7];
+    char stringdata0[118];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -32,10 +32,15 @@ static const qt_meta_stringdata_PainterWindow_t qt_meta_stringdata_PainterWindow
 QT_MOC_LITERAL(0, 0, 13), // "PainterWindow"
 QT_MOC_LITERAL(1, 14, 8), // "drawTree"
 QT_MOC_LITERAL(2, 23, 0), // ""
-QT_MOC_LITERAL(3, 24, 21) // "on_pushButton_clicked"
+QT_MOC_LITERAL(3, 24, 21), // "on_pushButton_clicked"
+QT_MOC_LITERAL(4, 46, 23), // "on_pushButton_2_clicked"
+QT_MOC_LITERAL(5, 70, 23), // "on_pushButton_3_clicked"
+QT_MOC_LITERAL(6, 94, 23) // "on_pushButton_4_clicked"
 
     },
-    "PainterWindow\0drawTree\0\0on_pushButton_clicked"
+    "PainterWindow\0drawTree\0\0on_pushButton_clicked\0"
+    "on_pushButton_2_clicked\0on_pushButton_3_clicked\0"
+    "on_pushButton_4_clicked"
 };
 #undef QT_MOC_LITERAL
 
@@ -45,7 +50,7 @@ static const uint qt_meta_data_PainterWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -53,11 +58,17 @@ static const uint qt_meta_data_PainterWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    1,   24,    2, 0x0a /* Public */,
-       3,    0,   27,    2, 0x0a /* Public */,
+       1,    1,   39,    2, 0x0a /* Public */,
+       3,    0,   42,    2, 0x0a /* Public */,
+       4,    0,   43,    2, 0x0a /* Public */,
+       5,    0,   44,    2, 0x0a /* Public */,
+       6,    0,   45,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void, QMetaType::QString,    2,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
 
        0        // eod
@@ -71,13 +82,16 @@ void PainterWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         switch (_id) {
         case 0: _t->drawTree((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 1: _t->on_pushButton_clicked(); break;
+        case 2: _t->on_pushButton_2_clicked(); break;
+        case 3: _t->on_pushButton_3_clicked(); break;
+        case 4: _t->on_pushButton_4_clicked(); break;
         default: ;
         }
     }
 }
 
 const QMetaObject PainterWindow::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_PainterWindow.data,
+    { &QMainWindow::staticMetaObject, qt_meta_stringdata_PainterWindow.data,
       qt_meta_data_PainterWindow,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
@@ -92,22 +106,22 @@ void *PainterWindow::qt_metacast(const char *_clname)
     if (!_clname) return Q_NULLPTR;
     if (!strcmp(_clname, qt_meta_stringdata_PainterWindow.stringdata0))
         return static_cast<void*>(const_cast< PainterWindow*>(this));
-    return QWidget::qt_metacast(_clname);
+    return QMainWindow::qt_metacast(_clname);
 }
 
 int PainterWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = QMainWindow::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 5;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 2)
+        if (_id < 5)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 2;
+        _id -= 5;
     }
     return _id;
 }

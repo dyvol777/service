@@ -20,7 +20,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QTextEdit>
+#include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 
@@ -34,7 +34,7 @@ public:
     QPushButton *pushButton;
     QPushButton *pushButton_2;
     QListWidget *listWidget;
-    QTextEdit *textEdit;
+    QTextBrowser *textBrowser;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -58,9 +58,9 @@ public:
         listWidget = new QListWidget(centralWidget);
         listWidget->setObjectName(QStringLiteral("listWidget"));
         listWidget->setGeometry(QRect(20, 70, 421, 301));
-        textEdit = new QTextEdit(centralWidget);
-        textEdit->setObjectName(QStringLiteral("textEdit"));
-        textEdit->setGeometry(QRect(470, 110, 221, 261));
+        textBrowser = new QTextBrowser(centralWidget);
+        textBrowser->setObjectName(QStringLiteral("textBrowser"));
+        textBrowser->setGeometry(QRect(470, 120, 301, 231));
         WelcomeWindowClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(WelcomeWindowClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -83,7 +83,7 @@ public:
         WelcomeWindowClass->setWindowTitle(QApplication::translate("WelcomeWindowClass", "WelcomeWindow", 0));
         pushButton->setText(QApplication::translate("WelcomeWindowClass", "\320\222\321\213\321\207\320\270\321\201\320\273\320\270\321\202\321\214 \320\270 \320\275\320\260\321\200\320\270\321\201\320\276\320\262\320\260\321\202\321\214", 0));
         pushButton_2->setText(QApplication::translate("WelcomeWindowClass", "\320\236\321\202\320\276\320\261\321\200\320\260\320\267\320\270\321\202\321\214 \321\201\321\205\320\265\320\274\321\203", 0));
-        textEdit->setHtml(QApplication::translate("WelcomeWindowClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        textBrowser->setHtml(QApplication::translate("WelcomeWindowClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;\">\n"

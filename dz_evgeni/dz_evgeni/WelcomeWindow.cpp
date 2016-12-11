@@ -7,10 +7,11 @@ WelcomeWindow::WelcomeWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
-	mPWindow = new PainterWindow;
+	mPWindow = new PainterWindow();
 	connect(this, SIGNAL(formula(QString)), mPWindow, SLOT(drawTree(QString)));
 	connect(ui.lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(enableButton(const QString &)));
 	emit ui.lineEdit->textChanged("");
+	ui.pushButton_2->setEnabled(false);
 }
 WelcomeWindow::~WelcomeWindow()
 {
@@ -25,67 +26,44 @@ void WelcomeWindow::on_pushButton_clicked()
 	if (checkLine(str)) {
 		emit formula(text);
 		tableTrue(text);
+		ui.pushButton_2->setEnabled(true);
 	}
+	
 }
-bool WelcomeWindow::checkLine(string& str) {
-	Parcer helper;
-	for (auto i : str) {
-		if (!((i == '(') || (i == ')') || (helper.isOperator(i)) || (helper.isVariable(i)))) {
-			QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "Wrong simbols detected");
-			pmb->exec();
-			delete pmb;
-			return false;
-		}
-	}
-	int countOpen = 0, countClose = 0;
-	for (auto i : str) {
-		if (i == '(')
-			countOpen++;
-		if (i == ')')
-			countClose++;
-	}
-	if (countOpen != countClose) {
-		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "Brackets miss count");
-		pmb->exec();
-		delete pmb;
-		return false;
-	}
+void WelcomeWindow::checkPositions(string& str, Parcer& helper)
+{
 	for (int i = 0;i < str.size() - 1;i++) {
+		if (str[i] == ')'&&str[i + 1] == '(')
+		{
+			throw runtime_error("No operator between brackets");
+		}
 		if ((helper.isOperator(str[i])) && (helper.isOperator(str[i + 1])))
 		{
-			QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "One by one operators");
-			pmb->exec();
-			delete pmb;
-			return false;
+			throw runtime_error("One by one operators");
 		}
 		if ((helper.isVariable(str[i])) && (helper.isVariable(str[i + 1])))
 		{
-			QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "One by one variables");
-			pmb->exec();
-			delete pmb;
-			return false;
+			throw runtime_error("One by one variables");
 		}
 		if ((helper.isVariable(str[i])) && (str[i + 1] == '('))
 		{
-			QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "variable+bracket");
-			pmb->exec();
-			delete pmb;
-			return false;
+			throw runtime_error("variable+bracket");
 		}
 		if ((helper.isVariable(str[i + 1])) && (str[i] == ')'))
 		{
-			QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "bracket+variable");
-			pmb->exec();
-			delete pmb;
-			return false;
+			throw runtime_error("bracket+variable");
 		}
 	}
+	if ((helper.isOperator(str[0])) || (helper.isOperator(str[str.size() - 1])))
+	{
+		throw runtime_error("Begins or ends with an operator");
+	}
+}
+void WelcomeWindow::checkSize(string& str, Parcer& helper)
+{
 	if (str.size() < 3)
 	{
-		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "Too short function");
-		pmb->exec();
-		delete pmb;
-		return false;
+		throw runtime_error("Too short function");
 	}
 	int counter = 0;
 	for (auto i : str) {
@@ -94,23 +72,53 @@ bool WelcomeWindow::checkLine(string& str) {
 	}
 	if (counter == 0)
 	{
-		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "This is not a function");
-		pmb->exec();
-		delete pmb;
-		return false;
+		throw runtime_error("This is not a function");
 	}
-	if ((helper.isOperator(str[0])) || (helper.isOperator(str[str.size() - 1])))
+}
+void WelcomeWindow::checkSimbols(string& str, Parcer& helper)
+{
+	for (auto i : str) {
+		if (!((i == '(') || (i == ')') || (helper.isOperator(i)) || (helper.isVariable(i)))) {
+			throw runtime_error("Wrong simbols detected");
+		}
+	}
+}
+void WelcomeWindow::checkBrakets(string& str, Parcer& helper)
+{
+	int countOpen = 0, countClose = 0;
+	for (auto i : str) {
+		if (i == '(')
+			countOpen++;
+		if (i == ')')
+			countClose++;
+	}
+	if (countOpen != countClose) {
+		throw runtime_error("Brackets miss count");
+	}
+}
+bool WelcomeWindow::checkLine(string& str) {
+	Parcer helper;
+	bool ret = true;
+	try
 	{
-		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", "Begins or ends with an operator");
+		checkSimbols(str, helper);
+		checkBrakets(str, helper);
+		checkPositions(str, helper);
+		checkSize(str, helper);
+	}
+	catch(runtime_error& ec)
+	{
+		QMessageBox* pmb = new QMessageBox(QMessageBox::Information, "Error entering function", ec.what());
 		pmb->exec();
 		delete pmb;
-		return false;
+		ret = false;
 	}
-	return true;
+	return ret;
 }
 void WelcomeWindow::enableButton(const QString &text)
 {
 	ui.pushButton->setEnabled(!text.isEmpty());
+	
 }
 void WelcomeWindow::tableTrue(const QString& text) {
 	string str=text.toStdString();

@@ -60,13 +60,13 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit">
+   <widget class="QTextBrowser" name="textBrowser">
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>110</y>
-      <width>221</width>
-      <height>261</height>
+      <y>120</y>
+      <width>301</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="html">

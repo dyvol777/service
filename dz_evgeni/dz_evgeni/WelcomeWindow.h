@@ -15,19 +15,31 @@ class QMessageBox;
 class WelcomeWindow : public QMainWindow
 {
 	Q_OBJECT
-public slots:
+		public slots:
 	void on_pushButton_clicked();
 	void on_pushButton_2_clicked();
 	void enableButton(const QString &text);
+	
 signals:
 	void formula(const QString&);
 
 public:
+
 	void tableTrue(const QString&);
 	vector<char> searchVariables(string&);
     WelcomeWindow(QWidget *parent = Q_NULLPTR);
 	bool checkLine(string&);
+	void checkSimbols(string&, Parcer&);
+	void checkBrakets(string&, Parcer&);
+	void checkPositions(string&, Parcer&);
+	void checkSize(string&, Parcer&);
 	~WelcomeWindow();
+protected:
+	void closeEvent(QCloseEvent *event)
+	{
+		QMainWindow::closeEvent(event);
+		mPWindow->close();
+	}
 
 private:
     Ui::WelcomeWindowClass ui;

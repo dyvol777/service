@@ -3,7 +3,7 @@
 #include "Pancer.h"
 #include "PainterWindow.h"
 #include "WelcomeWindow.h"
-#include "Scheme.h"
+
 
 string variables("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 string operators("&|+-");//êîíúþíêöèÿ, äèçúþíêöèÿ, áóëåâ ïëþñ, ðàâåíñòâî
@@ -199,26 +199,23 @@ bool tree::isOperator(char c)
 	}
 	return false;
 }
-void tree::buildTree(shared_ptr<tree> current)//void tree::buildTree(tree* current)
+void tree::buildTree(shared_ptr<tree> current)
 {
-
-	current->right.reset(new tree); //current->right = new tree;
+	current->right.reset(new tree); 
 	current->right->data = tempOutput.back();
 	tempOutput.pop_back();
 	current->right->level = current->level + 1;
 	if (current->right->level > biggestLevel)
 		biggestLevel = current->right->level;
-	//current->right->top = current;
 	if (isOperator(current->right->data))
 	{
 		buildTree(current->right);
-		current->left.reset(new tree);//current->left = new tree;
+		current->left.reset(new tree);
 		current->left->data = tempOutput.back();
 		tempOutput.pop_back();
 		current->left->level = current->level + 1;
 		if (current->left->level > biggestLevel)
 			biggestLevel = current->left->level;
-		//current->left->top = current;
 		if (isOperator(current->left->data))
 		{
 			buildTree(current->left);

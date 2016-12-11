@@ -1,6 +1,6 @@
 #include "WelcomeWindow.h"
 #include <QtWidgets/QApplication>
-#include "Scheme.h"
+
 #include "Pancer.h"
 deque<char> tree::tempOutput;
 int tree::biggestLevel = 0;
