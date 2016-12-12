@@ -121,7 +121,10 @@ int PainterWindow::getRightBot(shared_ptr<tree> current)
 	if (current->right == nullptr)
 		return current->coord.first;
 }
-void PainterWindow::drawTree(const QString& input)//����� ��������
+
+// функции ниже хотят рефакторинга. Возможно, имеет смысл вызделить какие-л. дополнительные классы.
+// магические константы сильно напрягают. как они связаны между собой?
+void PainterWindow::drawTree(const QString& input)//çäåñü íàãàæåíî
 {
 	
 	delete mScene;
@@ -228,6 +231,8 @@ void PainterWindow::setupScene() //����� �������� ����
 	mView = new QGraphicsView(this);
 	//mView->setScene(mScene);
 }
+
+// нельзя ли слотам дать нормальные имена?
 void PainterWindow::on_pushButton_clicked(){
 	QString text = ui.lineEdit->text();
 	if (checkLine(text)) {

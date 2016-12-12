@@ -35,6 +35,7 @@ protected:
 	map<char, char> values;
 };
 
+// тут все публичное?
 class tree
 
 {
